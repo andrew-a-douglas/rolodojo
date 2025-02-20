@@ -2,69 +2,83 @@
 <html>
 <head>
   <script>
-    function getQueryParam(param) {
-      const urlParams = new URLSearchParams(window.location.search);
-      return urlParams.get(param);
-    }
-
-    function formatNumberForService(number, service) {
-      if (!number) return "";
-    
-      // Remove any spaces, leading/trailing whitespace
-      number = number.trim();
-    
-      switch (service.toLowerCase()) {
-        case "whatsapp":
-        case "googlevoice":
-          return number.replace("+", ""); // Remove "+" for these services
-    
-        case "imessage":
-          return number; // Keep "+" for iMessage
-    
-        case "sms":
-          return number.startsWith("+") ? number : "+" + number; // Ensure "+" for SMS
-    
-        default:
-          return number.replace("+", ""); // Safe fallback
-      }
-    }
-
-
-    function redirectToService() {
-      let service = getQueryParam("service");
-      let number = getQueryParam("number");
-
-      if (!number || !service) {
-        alert("Missing number or service type.");
-        return;
+    document.addEventListener("DOMContentLoaded", function () {
+      function getQueryParam(param) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(param);
       }
 
-      let formattedNumber = formatNumberForService(number, service);
+      function formatNumberForService(number, service) {
+        if (!number) return "";
 
-      let redirectUrl = "";
-      switch (service.toLowerCase()) {
-        case "whatsapp":
-          redirectUrl = "https://wa.me/" + formattedNumber;
-          break;
-        case "imessage":
-          redirectUrl = "imessage://" + formattedNumber;
-          break;
-        case "sms":
-          redirectUrl = "sms://" + formattedNumber;
-          break;
-        case "googlevoice":
-          redirectUrl = "https://voice.google.com/u/0/messages?a=sm,%2B" + formattedNumber;
-          break;
-        default:
-          alert("Invalid service type.");
+        // Remove any spaces, leading/trailing whitespace
+        number = number.trim();
+
+        switch (service.toLowerCase()) {
+          case "whatsapp":
+          case "googlevoice":
+            return number.replace("+", ""); // Remove "+" for these services
+
+          case "imessage":
+            return number; // Keep "+" for iMessage
+
+          case "sms":
+            return number.startsWith("+") ? number : "+" + number; // Ensure "+" for SMS
+
+          default:
+            return number.replace("+", ""); // Safe fallback
+        }
+      }
+
+      function copyToClipboard(text) {
+        navigator.clipboard.writeText(text)
+          .then(() => console.log("Copied to clipboard:", text))
+          .catch(err => console.error("Clipboard copy failed:", err));
+      }
+
+      function redirectToService() {
+        let service = getQueryParam("service");
+        let number = getQueryParam("number");
+
+        if (!number || !service) {
+          alert("Missing number or service type.");
           return;
+        }
+
+        let formattedNumber = formatNumberForService(number, service);
+
+        // Copy number to clipboard
+        copyToClipboard(formattedNumber);
+
+        // Define redirect URLs
+        let redirectUrl = "";
+        switch (service.toLowerCase()) {
+          case "whatsapp":
+            redirectUrl = "https://wa.me/" + formattedNumber;
+            break;
+          case "imessage":
+            redirectUrl = "imessage://" + formattedNumber;
+            break;
+          case "sms":
+            redirectUrl = "sms://" + formattedNumber;
+            break;
+          case "googlevoice":
+            redirectUrl = "https://voice.google.com/u/0/messages?a=sm,%2B" + formattedNumber;
+            break;
+          default:
+            alert("Invalid service type.");
+            return;
+        }
+
+        console.log("Redirecting to:", redirectUrl); // Debugging log
+        window.location.href = redirectUrl;
       }
 
-      window.location.href = redirectUrl;
-    }
+      redirectToService();
+    });
   </script>
 </head>
-<body onload="redirectToService()">
-  <p>Redirecting to your messaging service...</p>
+<body>
+  <p>Phone number copied. Redirecting to your messaging service...</p>
 </body>
 </html>
