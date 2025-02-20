@@ -90,9 +90,9 @@
         console.log("Redirecting to:", redirectUrl);
         
         // Show confirmation before redirecting
-        document.getElementById("message").innerText = "Number copied! Redirecting in 2 seconds...";
+        document.getElementById("message").innerText = "Number copied! Redirecting in 1 second...";
         
-        setTimeout(() => { window.location.href = redirectUrl; }, 2000); // 2-second delay before redirect
+        setTimeout(() => { window.location.href = redirectUrl; }, 1000); // 2-second delay before redirect
       }
 
       redirectToService();
