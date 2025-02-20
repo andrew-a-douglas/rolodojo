@@ -16,6 +16,8 @@
         switch (service.toLowerCase()) {
           case "whatsapp":
           case "googlevoice":
+          case "gvoicecall":
+          case "phonecall":
             return number.replace("+", ""); // Remove "+" for these services
 
           case "imessage":
@@ -74,13 +76,23 @@
           case "googlevoice":
             redirectUrl = "https://voice.google.com/u/0/messages?a=sm,%2B" + formattedNumber;
             break;
+          case "gvoicecall": // Open Google Voice Web Dialer
+            redirectUrl = "https://voice.google.com/u/0/calls?a=nc,%2B" + formattedNumber;
+            break;
+          case "phonecall": // Open Standard Phone Dialer
+            redirectUrl = "tel:" + formattedNumber;
+            break;
           default:
             alert("Invalid service type.");
             return;
         }
 
         console.log("Redirecting to:", redirectUrl);
-        setTimeout(() => { window.location.href = redirectUrl; }, 500); // Delay for clipboard copy
+        
+        // Show confirmation before redirecting
+        document.getElementById("message").innerText = "Number copied! Redirecting in 2 seconds...";
+        
+        setTimeout(() => { window.location.href = redirectUrl; }, 2000); // 2-second delay before redirect
       }
 
       redirectToService();
@@ -88,6 +100,6 @@
   </script>
 </head>
 <body>
-  <p>Phone number copied (attempt 2). Redirecting to your messaging service...</p>
+  <p id="message">Phone number copied. Redirecting to your messaging service...</p>
 </body>
 </html>
