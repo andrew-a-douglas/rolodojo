@@ -9,20 +9,26 @@
 
     function formatNumberForService(number, service) {
       if (!number) return "";
-
+    
+      // Remove any spaces, leading/trailing whitespace
+      number = number.trim();
+    
       switch (service.toLowerCase()) {
         case "whatsapp":
         case "googlevoice":
           return number.replace("+", ""); // Remove "+" for these services
-
+    
         case "imessage":
+          return number; // Keep "+" for iMessage
+    
         case "sms":
-          return number; // Keep "+" as iMessage & SMS support it
-
+          return number.startsWith("+") ? number : "+" + number; // Ensure "+" for SMS
+    
         default:
           return number.replace("+", ""); // Safe fallback
       }
     }
+
 
     function redirectToService() {
       let service = getQueryParam("service");
