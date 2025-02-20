@@ -11,8 +11,7 @@
       function formatNumberForService(number, service) {
         if (!number) return "";
 
-        // Remove any spaces, leading/trailing whitespace
-        number = number.trim();
+        number = number.trim(); // Remove spaces
 
         switch (service.toLowerCase()) {
           case "whatsapp":
@@ -20,10 +19,8 @@
             return number.replace("+", ""); // Remove "+" for these services
 
           case "imessage":
-            return number; // Keep "+" for iMessage
-
           case "sms":
-            return number.startsWith("+") ? number : "+" + number; // Ensure "+" for SMS
+            return number; // Keep "+" for iMessage & SMS
 
           default:
             return number.replace("+", ""); // Safe fallback
@@ -31,6 +28,19 @@
       }
 
       function copyToClipboard(text) {
+        if (!navigator.clipboard) {
+          // Fallback for older browsers
+          let tempInput = document.createElement("textarea");
+          tempInput.value = text;
+          document.body.appendChild(tempInput);
+          tempInput.select();
+          document.execCommand("copy");
+          document.body.removeChild(tempInput);
+          console.log("Copied using fallback:", text);
+          return;
+        }
+
+        // Modern clipboard API
         navigator.clipboard.writeText(text)
           .then(() => console.log("Copied to clipboard:", text))
           .catch(err => console.error("Clipboard copy failed:", err));
@@ -50,7 +60,6 @@
         // Copy number to clipboard
         copyToClipboard(formattedNumber);
 
-        // Define redirect URLs
         let redirectUrl = "";
         switch (service.toLowerCase()) {
           case "whatsapp":
@@ -70,8 +79,8 @@
             return;
         }
 
-        console.log("Redirecting to:", redirectUrl); // Debugging log
-        window.location.href = redirectUrl;
+        console.log("Redirecting to:", redirectUrl);
+        setTimeout(() => { window.location.href = redirectUrl; }, 500); // Delay for clipboard copy
       }
 
       redirectToService();
@@ -79,6 +88,6 @@
   </script>
 </head>
 <body>
-  <p>Phone number copied. Redirecting to your messaging service...</p>
+  <p>Phone number copied (attempt 2). Redirecting to your messaging service...</p>
 </body>
 </html>
