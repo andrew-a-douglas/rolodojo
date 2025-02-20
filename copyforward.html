@@ -1,4 +1,64 @@
 <!DOCTYPE html>
 <html>
-  <p>Hello World</p>
+<head>
+  <script>
+    function getQueryParam(param) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(param);
+    }
+
+    function formatNumberForService(number, service) {
+      if (!number) return "";
+
+      switch (service.toLowerCase()) {
+        case "whatsapp":
+        case "googlevoice":
+          return number.replace("+", ""); // Remove "+" for these services
+
+        case "imessage":
+        case "sms":
+          return number; // Keep "+" as iMessage & SMS support it
+
+        default:
+          return number.replace("+", ""); // Safe fallback
+      }
+    }
+
+    function redirectToService() {
+      let service = getQueryParam("service");
+      let number = getQueryParam("number");
+
+      if (!number || !service) {
+        alert("Missing number or service type.");
+        return;
+      }
+
+      let formattedNumber = formatNumberForService(number, service);
+
+      let redirectUrl = "";
+      switch (service.toLowerCase()) {
+        case "whatsapp":
+          redirectUrl = "https://wa.me/" + formattedNumber;
+          break;
+        case "imessage":
+          redirectUrl = "imessage://" + formattedNumber;
+          break;
+        case "sms":
+          redirectUrl = "sms://" + formattedNumber;
+          break;
+        case "googlevoice":
+          redirectUrl = "https://voice.google.com/u/0/messages?a=sm,%2B" + formattedNumber;
+          break;
+        default:
+          alert("Invalid service type.");
+          return;
+      }
+
+      window.location.href = redirectUrl;
+    }
+  </script>
+</head>
+<body onload="redirectToService()">
+  <p>Redirecting to your messaging service...</p>
+</body>
 </html>
